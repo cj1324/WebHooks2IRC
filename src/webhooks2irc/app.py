@@ -4,6 +4,8 @@
 from __future__ import (absolute_import,
                         unicode_literals)
 
+from webhooks2irc import settings
+
 try:
     from urllib import parse as urlparse  # for python3
 except ImportError:
@@ -18,7 +20,8 @@ from bottle import (get,
 
 @get('/')
 def index():
-    URI = urlparse.urljoin(request.url, '/<channel>/hooks.json')
+    URI = urlparse.urljoin(request.url, '/{0}/hooks.json'.format(
+                                        settings.IRC_CHANNEL))
     return template("""<h1>{{message}}</h1>
                     <h2>Web Hooks Address:</h2></br>
                     <input value="{{URI}}" size="40" />
@@ -32,6 +35,6 @@ def hooks(channel):
     return template('ok. channel:{{channel}}', channel=channel)
 
 if __name__ == '__main__':
-    bottle.run(host='0.0.0.0', port=8080)
+    bottle.run(host=settings.WEB_HOST, port=settings.WEB_PORT)
 else:
     app = application = bottle.default_app()
