@@ -18,7 +18,7 @@ from bottle import (get,
 
 @get('/')
 def index():
-    URI = urlparse.urljoin(request.url, '/hooks.json')
+    URI = urlparse.urljoin(request.url, '/<channel>/hooks.json')
     return template("""<h1>{{message}}</h1>
                     <h2>Web Hooks Address:</h2></br>
                     <input value="{{URI}}" size="40" />
@@ -27,9 +27,9 @@ def index():
                     URI=URI)
 
 
-@post('/hooks.json')
-def hooks():
-    pass
+@post('/<channel>/hooks.json')
+def hooks(channel):
+    return template('ok. channel:{{channel}}', channel=channel)
 
 if __name__ == '__main__':
     bottle.run(host='0.0.0.0', port=8080)
