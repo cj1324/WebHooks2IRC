@@ -21,6 +21,8 @@ from webhooks2irc.core.ircbot import IrcBotService
 
 
 # FIXME: main function
+init_logger()
+logger = logging.getLogger('webhooks2irc')
 ser = IrcBotService()
 ser.daemon = True
 ser.start()
@@ -49,6 +51,7 @@ def irc_hi():
     return 'ok.'
 
 if __name__ == '__main__':
+    logger.info("Running Develope Mode.")
     bottle.run(host=settings.WEB_HOST, port=settings.WEB_PORT)
 else:
     app = application = bottle.default_app()
