@@ -5,6 +5,7 @@ from __future__ import (absolute_import,
                         unicode_literals)
 
 from webhooks2irc import settings
+from webhooks2irc.core.ircbot import IrcBotService
 
 try:
     from urllib import parse as urlparse  # for python3
@@ -16,6 +17,12 @@ from bottle import (get,
                     post,
                     template,
                     request)
+
+
+# FIXME: main function
+ser = IrcBotService()
+ser.daemon = True
+ser.start()
 
 
 @get('/')
@@ -33,6 +40,12 @@ def index():
 @post('/<channel>/hooks.json')
 def hooks(channel):
     return template('ok. channel:{{channel}}', channel=channel)
+
+
+@get('/irc/hi')
+def irc_hi():
+    ser.hi.set()
+    return 'ok.'
 
 if __name__ == '__main__':
     bottle.run(host=settings.WEB_HOST, port=settings.WEB_PORT)
