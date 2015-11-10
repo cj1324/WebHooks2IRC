@@ -3,10 +3,7 @@
 
 from __future__ import (absolute_import,
                         unicode_literals)
-
-from webhooks2irc import settings
-from webhooks2irc.core.ircbot import IrcBotService
-
+import logging
 try:
     from urllib import parse as urlparse  # for python3
 except ImportError:
@@ -17,6 +14,10 @@ from bottle import (get,
                     post,
                     template,
                     request)
+
+from webhooks2irc import settings
+from webhooks2irc.core.logger import init_logger
+from webhooks2irc.core.ircbot import IrcBotService
 
 
 # FIXME: main function
