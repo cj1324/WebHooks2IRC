@@ -39,7 +39,8 @@ setup(
     package_dir={'webhooks2irc': 'src/webhooks2irc'},
     install_requires=[
         'bottle',
-        'irc'
+        'irc',
+        'Mako'
     ],
     classifiers=[
         'Environment :: Console',

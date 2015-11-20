@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # coding: UTF-8
 
+import os
+
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 WEB_HOST = "0.0.0.0"
 WEB_PORT = 8080
 
@@ -13,6 +17,8 @@ IRC_PASSWD = ""
 IRC_HIMSG = "Bot Running ok."
 
 IRC_DATA_TIMEOUT = 1
+
+TEMPLATE_DIRS = [os.path.join(PROJECT_DIR, 'templates')]
 
 LOG_CONFIG_DICT = {
     'version': 1,

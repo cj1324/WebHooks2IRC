@@ -18,14 +18,17 @@ from bottle import (get,
 from webhooks2irc import settings
 from webhooks2irc.core.logger import init_logger
 from webhooks2irc.core.ircbot import IrcBotService
+from webhooks2irc.core.template import MessageTemplate
 
 
 # FIXME: main function
 init_logger()
+msgtempl = MessageTemplate()
 logger = logging.getLogger('webhooks2irc')
 ser = IrcBotService()
 ser.daemon = True
 ser.start()
+
 
 
 @get('/')
@@ -42,7 +45,14 @@ def index():
 
 @post('/<channel>/hooks.json')
 def hooks(channel):
-    return template('ok. channel:{{channel}}', channel=channel)
+    event = request.get_header('X-Gitlab-Event')
+    logger.debug('X-Gitlab-Event:{0}'.format(event))
+    logger.debug('{0}'.format(repr(request.json)))
+    message = msgtempl.get_message(event, request.json)
+    logger.debug(message)
+    return template('ok. channel:{{channel}} event: {{event}}',
+                    channel=channel,
+                    event=event)
 
 
 @get('/irc/hi')
