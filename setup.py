@@ -35,8 +35,9 @@ setup(
     author='HanChen',
     author_email='chen1324@gmail.com',
     license='BSD-2-Clause',
-    packages=['webhooks2irc'],
+    packages=['webhooks2irc', 'webhooks2irc.core'],
     package_dir={'webhooks2irc': 'src/webhooks2irc'},
+    package_data={'webhooks2irc': ['templates/*.tpl']},
     install_requires=[
         'bottle',
         'irc',
@@ -51,5 +52,6 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
     ]
 )
