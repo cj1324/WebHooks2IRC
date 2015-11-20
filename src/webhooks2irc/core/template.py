@@ -14,8 +14,13 @@ class MessageTemplate(object):
 
     def _get_template(self, event):
         filename = event.replace(' ', '-').lower()
-        return self.lookup.get_template("/{0}.tpl".format(filename))
+        template_name = "/{0}.tpl".format(filename)
+        if self.lookup.has_template(template_name):
+            return self.lookup.get_template(template_name)
 
     def get_message(self, event, json):
         template = self._get_template(event)
-        return template.render(**json)
+        # use replace so. Carriage returns not allowed in privmsg(text)
+        # https://github.com/jaraco/irc/blob/master/irc/client.py#L900
+        if template:
+            return template.render(**json).replace('\n', '')

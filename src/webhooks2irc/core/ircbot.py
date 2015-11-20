@@ -4,6 +4,8 @@
 import time
 import threading
 import logging
+import queue
+from queue import LifoQueue as Queue
 
 from irc import client as irc_client
 
@@ -14,6 +16,7 @@ logger = logging.getLogger(__name__)
 class IrcBotService(threading.Thread):
     def __init__(self):
         self.client = irc_client.Reactor()
+        self.queue = Queue(32)
         server = self.client.server()
         logger.debug('connect to {0}.'.format(settings.IRC_HOST))
         server.connect(settings.IRC_HOST,
@@ -24,15 +27,31 @@ class IrcBotService(threading.Thread):
         self.hi = threading.Event()
         super(IrcBotService, self).__init__()
 
+    def _reconn(self):
+        if not self.server.is_connected():
+            logger.debug('server reconnect.')
+            self.server.reconnect()
+
+    def _send(self, channel, message):
+        self._reconn()
+        self.server.join("#{0}".format(channel))
+        self.server.privmsg("#{0}".format(channel), message)
+
     def run(self):
         while True:
-            if not self.server.is_connected():
-                logger.debug('server reconnect.')
-                self.server.reconnect()
+            self._reconn()
             self.client.process_once(settings.IRC_DATA_TIMEOUT)
             if self.hi.is_set():
                 logger.debug('ready send hi message.')
-                self.server.join("#{0}".format(settings.IRC_CHANNEL))
-                self.server.privmsg("#{0}".format(settings.IRC_CHANNEL),
-                                    settings.IRC_HIMSG)
+                self._send(self.IRC_CHANNEL,
+                           self.IRC_HIMSG)
                 self.hi.clear()
+            try:
+                obj = self.queue.get(block=False)  # FIXME: Python 2 ?
+                logger.info("ready send to #{0}".format(obj['channel']))
+                self._send(obj['channel'], obj['message'])
+            except queue.Empty:
+                pass
+
+    def put_message(self, obj):
+        self.queue.put(obj)

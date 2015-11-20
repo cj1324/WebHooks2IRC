@@ -30,7 +30,6 @@ ser.daemon = True
 ser.start()
 
 
-
 @get('/')
 def index():
     URI = urlparse.urljoin(request.url, '/{0}/hooks.json'.format(
@@ -49,7 +48,11 @@ def hooks(channel):
     logger.debug('X-Gitlab-Event:{0}'.format(event))
     logger.debug('{0}'.format(repr(request.json)))
     message = msgtempl.get_message(event, request.json)
-    logger.debug(message)
+    if message:
+        logger.debug(message)
+        ser.put_message({'channel': channel, 'message': message})
+    else:
+        logger.info('not found template.')
     return template('ok. channel:{{channel}} event: {{event}}',
                     channel=channel,
                     event=event)
