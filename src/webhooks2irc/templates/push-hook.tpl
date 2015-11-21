@@ -1,3 +1,6 @@
-debug object_kind: ${object_kind}
-Repo Name: ${repository['name']}
-Commit User: ${commits[0]['author']['name']}
+ Repo: ${repository['name']} |
+ Branch: ${ref} |
+ Event: ${object_kind} |
+ User: ${user_name} |
+ Count: ${total_commits_count} |
+ Last Commit: ${commits[total_commits_count - 1]['message']} > ${commits[total_commits_count - 1]['url']}
