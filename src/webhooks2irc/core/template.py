@@ -28,7 +28,7 @@ class MessageTemplate(object):
 
         try:
             message = template.render(**json)
-        except (KeyError, TypeError):
+        except (KeyError, TypeError, IndexError):
             logger.exception("Template Render Failed.")
             return
 
