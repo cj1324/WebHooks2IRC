@@ -34,4 +34,4 @@ class MessageTemplate(object):
 
         # use replace so. Carriage returns not allowed in privmsg(text)
         # https://github.com/jaraco/irc/blob/master/irc/client.py#L900
-        return message.replace('\n', '')
+        return message.replace('\n', '').replace('\r', '').strip()
