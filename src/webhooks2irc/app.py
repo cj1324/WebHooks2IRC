@@ -4,10 +4,12 @@
 from __future__ import (absolute_import,
                         unicode_literals)
 import logging
+# pylint: disable=import-error
 try:
     from urllib import parse as urlparse  # for python3
 except ImportError:
     import urlparse
+# pylint: enable=import-error
 
 import bottle
 from bottle import (get,
@@ -45,8 +47,8 @@ def index():
 @post('/<channel>/hooks.json')
 def hooks(channel):
     event = request.get_header('X-Gitlab-Event')
-    logger.debug('X-Gitlab-Event:{0}'.format(event))
-    logger.debug('{0}'.format(repr(request.json)))
+    logger.info('X-Gitlab-Event: %s', event)
+    logger.debug(repr(request.json))
     message = msgtempl.get_message(event, request.json)
     if message:
         logger.debug(message)

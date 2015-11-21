@@ -4,10 +4,12 @@
 import os
 import re
 
+# pylint: disable=import-error
 try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
+# pylint: enable=import-error
 
 
 def read_file(*paths):

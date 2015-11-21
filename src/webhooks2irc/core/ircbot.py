@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # coding: UTF-8
 
-import time
 import threading
 import logging
 import queue
@@ -18,11 +17,10 @@ class IrcBotService(threading.Thread):
         self.client = irc_client.Reactor()
         self.queue = Queue(32)
         server = self.client.server()
-        logger.debug('connect to {0}.'.format(settings.IRC_HOST))
+        logger.info('connect to %s IRC.', settings.IRC_HOST)
         server.connect(settings.IRC_HOST,
                        settings.IRC_PORT,
                        settings.IRC_NICK)
-        server_name = server.get_server_name()
         self.server = server
         self.hi = threading.Event()
         super(IrcBotService, self).__init__()
@@ -48,7 +46,7 @@ class IrcBotService(threading.Thread):
                 self.hi.clear()
             try:
                 obj = self.queue.get(block=False)  # FIXME: Python 2 ?
-                logger.info("ready send to #{0}".format(obj['channel']))
+                logger.info("ready send to #%s", obj['channel'])
                 self._send(obj['channel'], obj['message'])
             except queue.Empty:
                 pass
