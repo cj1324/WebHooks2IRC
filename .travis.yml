@@ -12,3 +12,5 @@ install:
 script:
   - prospector setup.py
   - prospector src
+  - prospector tests
+  - nosetests --with-coverage tests
