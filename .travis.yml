@@ -10,7 +10,7 @@ install:
   - pip install -e .[test] . -b build
 
 script:
-  - prospector setup.py
-  - prospector src
-  - prospector tests
+  - prospector --no-autodetect setup.py
+  - prospector --no-autodetect src
+  - prospector --no-autodetect tests
   - nosetests --with-coverage tests
