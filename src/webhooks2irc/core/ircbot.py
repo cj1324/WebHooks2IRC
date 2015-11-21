@@ -28,6 +28,7 @@ class IrcBotService(threading.Thread):
                        settings.IRC_NICK)
         self.server = server
         self.hi = threading.Event()
+        self.stop = threading.Event()
         super(IrcBotService, self).__init__()
 
     def _reconn(self):
@@ -42,6 +43,9 @@ class IrcBotService(threading.Thread):
 
     def run(self):
         while True:
+            if self.stop.is_set():
+                self.stop.clear()
+                break
             self._reconn()
             self.client.process_once(settings.IRC_DATA_TIMEOUT)
             if self.hi.is_set():
