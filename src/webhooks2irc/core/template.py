@@ -2,10 +2,13 @@
 # coding: UTF-8
 
 import os
+import logging
 
 from mako.lookup import TemplateLookup
 
 from webhooks2irc import settings
+
+logger = logging.getLogger()
 
 
 class MessageTemplate(object):
@@ -20,7 +23,15 @@ class MessageTemplate(object):
 
     def get_message(self, event, json):
         template = self._get_template(event)
+        if template is None:
+            return
+
+        try:
+            message = template.render(**json)
+        except (KeyError, TypeError):
+            logger.exception("Template Render Failed.")
+            return
+
         # use replace so. Carriage returns not allowed in privmsg(text)
         # https://github.com/jaraco/irc/blob/master/irc/client.py#L900
-        if template:
-            return template.render(**json).replace('\n', '')
+        return message.replace('\n', '')
