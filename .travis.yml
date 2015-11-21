@@ -13,4 +13,4 @@ script:
   - prospector --no-autodetect setup.py
   - prospector --no-autodetect src
   - prospector --no-autodetect tests
-  - nosetests --with-coverage tests
+  - nosetests --with-coverage --cover-package=webhooks2irc tests
