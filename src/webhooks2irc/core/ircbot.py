@@ -21,15 +21,17 @@ class IrcBotService(threading.Thread):
     def __init__(self):
         self.client = irc_client.Reactor()
         self.queue = queue.LifoQueue(32)
+        self.hi = threading.Event()
+        self.stop = threading.Event()
+        super(IrcBotService, self).__init__()
+
+    def _conn(self):
         server = self.client.server()
-        logger.info('connect to %s IRC.', settings.IRC_HOST)
+        logger.info('ready connect to %s IRC.', settings.IRC_HOST)
         server.connect(settings.IRC_HOST,
                        settings.IRC_PORT,
                        settings.IRC_NICK)
         self.server = server
-        self.hi = threading.Event()
-        self.stop = threading.Event()
-        super(IrcBotService, self).__init__()
 
     def _reconn(self):
         if not self.server.is_connected():
@@ -42,6 +44,7 @@ class IrcBotService(threading.Thread):
         self.server.privmsg("#{0}".format(channel), message)
 
     def run(self):
+        self._conn()
         while True:
             if self.stop.is_set():
                 self.stop.clear()
@@ -50,8 +53,8 @@ class IrcBotService(threading.Thread):
             self.client.process_once(settings.IRC_DATA_TIMEOUT)
             if self.hi.is_set():
                 logger.debug('ready send hi message.')
-                self._send(self.IRC_CHANNEL,
-                           self.IRC_HIMSG)
+                self._send(settings.IRC_CHANNEL,
+                           settings.IRC_HIMSG)
                 self.hi.clear()
             try:
                 obj = self.queue.get(block=False)  # FIXME: Python 2 ?
