@@ -3,8 +3,13 @@
 
 import threading
 import logging
-import queue
-from queue import LifoQueue as Queue
+
+# pylint: disable=import-error
+try:
+    import queue
+except ImportError:
+    import Queue as queue
+# pylint: enable=import-error
 
 from irc import client as irc_client
 
@@ -15,7 +20,7 @@ logger = logging.getLogger(__name__)
 class IrcBotService(threading.Thread):
     def __init__(self):
         self.client = irc_client.Reactor()
-        self.queue = Queue(32)
+        self.queue = queue.LifoQueue(32)
         server = self.client.server()
         logger.info('connect to %s IRC.', settings.IRC_HOST)
         server.connect(settings.IRC_HOST,
