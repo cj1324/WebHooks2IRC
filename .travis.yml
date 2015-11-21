@@ -1,0 +1,14 @@
+language: python
+python:
+  - 2.7
+  - 3.3
+  - 3.4
+
+install:
+  - sudo apt-get install ircd-irc2
+  - sudo service ircd-irc2 restart
+  - pip install -e .[test] . -b build
+
+script:
+  - prospector setup.py
+  - prospector src

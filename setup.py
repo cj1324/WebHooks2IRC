@@ -45,6 +45,13 @@ setup(
         'irc',
         'Mako'
     ],
+    extras_require={
+        'test': [
+            'prospector',
+            'coverage',
+            'nose'
+        ]
+    },
     classifiers=[
         'Environment :: Console',
         'Environment :: Web Environment',
