@@ -25,12 +25,12 @@ class IrcBotServiceTestCase(unittest.TestCase):
 
     def test_bot_put_miss_obj_fail(self):
         self.ibs.put_message({})
-        time.sleep(1)
+        time.sleep(3)
         self.assertFalse(self.ibs.is_alive())
 
     def test_bot_put(self):
         self.ibs.put_message({'channel': 'default', 'message': 'testing.'})
-        time.sleep(1)
+        time.sleep(3)
         self.assertTrue(self.ibs.is_alive())
 
     def tearDown(self):
