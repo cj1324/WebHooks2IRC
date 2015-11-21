@@ -1,5 +1,7 @@
 ## WebHooks2IRC
 
+[![Build Status](https://travis-ci.org/cj1324/WebHooks2IRC.svg?branch=develop)](https://travis-ci.org/cj1324/WebHooks2IRC)
+
 GitLab Web Hooks to IRC
 
 实现GitLab Web Hooks的推送的数据进行模版渲染，然后发送到指定的IRC频道
@@ -15,11 +17,21 @@ GitLab Web Hooks to IRC
 
 # FUTURE
 
++ GitLab-CI 相关hooks支持.
++ 彩色化输出内容到IRC。
++ 通过 GitLab API 获取推送内容中部分 id 的名称
++ 支持发送私聊消息。
 + 相关BUG修正
 + 相关测试用例
 + Dockerfile编写
 
 # CHANGELOG
+
++ v0.1.1 2015-11-21
+  + 一些BUG修复
+  + 关键测试用例编写。
+  + travis-ci 集成
+  + 发布 v0.1.1
 
 + v0.1.0 2015-11-21
   + 模版渲染异常处理
