@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 # coding: UTF-8
 
-import time
 import threading
 import logging
-import queue
-from queue import LifoQueue as Queue
+
+# pylint: disable=import-error
+try:
+    import queue
+except ImportError:
+    import Queue as queue
+# pylint: enable=import-error
 
 from irc import client as irc_client
 
@@ -16,16 +20,18 @@ logger = logging.getLogger(__name__)
 class IrcBotService(threading.Thread):
     def __init__(self):
         self.client = irc_client.Reactor()
-        self.queue = Queue(32)
+        self.queue = queue.LifoQueue(32)
+        self.hi = threading.Event()
+        self.stop = threading.Event()
+        super(IrcBotService, self).__init__()
+
+    def _conn(self):
         server = self.client.server()
-        logger.debug('connect to {0}.'.format(settings.IRC_HOST))
+        logger.info('ready connect to %s IRC.', settings.IRC_HOST)
         server.connect(settings.IRC_HOST,
                        settings.IRC_PORT,
                        settings.IRC_NICK)
-        server_name = server.get_server_name()
         self.server = server
-        self.hi = threading.Event()
-        super(IrcBotService, self).__init__()
 
     def _reconn(self):
         if not self.server.is_connected():
@@ -38,17 +44,21 @@ class IrcBotService(threading.Thread):
         self.server.privmsg("#{0}".format(channel), message)
 
     def run(self):
+        self._conn()
         while True:
+            if self.stop.is_set():
+                self.stop.clear()
+                break
             self._reconn()
             self.client.process_once(settings.IRC_DATA_TIMEOUT)
             if self.hi.is_set():
                 logger.debug('ready send hi message.')
-                self._send(self.IRC_CHANNEL,
-                           self.IRC_HIMSG)
+                self._send(settings.IRC_CHANNEL,
+                           settings.IRC_HIMSG)
                 self.hi.clear()
             try:
                 obj = self.queue.get(block=False)  # FIXME: Python 2 ?
-                logger.info("ready send to #{0}".format(obj['channel']))
+                logger.info("ready send to #%s", obj['channel'])
                 self._send(obj['channel'], obj['message'])
             except queue.Empty:
                 pass
